@@ -1,11 +1,12 @@
 CHART_REPO := http://jenkins-x-chartmuseum:8080
 NAME := jenkins-x
 OS := $(shell uname)
-RELEASE_VERSION := $(shell jx-release-version)
+# RELEASE_VERSION := $(shell jx-release-version)
+RELEASE_VERSION := 2.0.292
 HELM := helm
 
-CHARTMUSEUM_CREDS_USR := $(shell cat /builder/home/basic-auth-user.json)
-CHARTMUSEUM_CREDS_PSW := $(shell cat /builder/home/basic-auth-pass.json)
+# CHARTMUSEUM_CREDS_USR := $(shell cat /builder/home/basic-auth-user.json)
+# CHARTMUSEUM_CREDS_PSW := $(shell cat /builder/home/basic-auth-pass.json)
 
 init:
 	$(HELM) init --client-only
@@ -37,7 +38,7 @@ upgrade: clean setup build
 delete:
 	$(HELM) delete --purge $(NAME)
 
-clean: 
+clean:
 	rm -rf jenkins-x-platform/charts
 	rm -rf jenkins-x-platform/${NAME}*.tgz
 	rm -rf jenkins-x-platform/requirements.lock
