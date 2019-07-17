@@ -1,8 +1,11 @@
 CHART_REPO := http://jenkins-x-chartmuseum:8080
 NAME := jenkins-x
 OS := $(shell uname)
+<<<<<<< HEAD
 # RELEASE_VERSION := $(shell jx-release-version)
 RELEASE_VERSION := 2.0.292
+=======
+>>>>>>> upstream/master
 HELM := helm
 
 # CHARTMUSEUM_CREDS_USR := $(shell cat /builder/home/basic-auth-user.json)
@@ -45,21 +48,20 @@ clean:
 
 release: setup clean build
 ifeq ($(OS),Darwin)
-	sed -i "" -e "s/version:.*/version: $(RELEASE_VERSION)/" jenkins-x-platform/Chart.yaml
+	sed -i "" -e "s/version:.*/version: $(VERSION)/" jenkins-x-platform/Chart.yaml
 else ifeq ($(OS),Linux)
-	sed -i -e "s/version:.*/version: $(RELEASE_VERSION)/" jenkins-x-platform/Chart.yaml
+	sed -i -e "s/version:.*/version: $(VERSION)/" jenkins-x-platform/Chart.yaml
 else
 	exit -1
 endif
-	git add jenkins-x-platform/Chart.yaml
-	git commit -a -m "release $(RELEASE_VERSION)" --allow-empty
-	git tag -fa v$(RELEASE_VERSION) -m "Release version $(RELEASE_VERSION)"
-	git push origin v$(RELEASE_VERSION)
 	$(HELM) package jenkins-x-platform
-	curl --fail -u $(CHARTMUSEUM_CREDS_USR):$(CHARTMUSEUM_CREDS_PSW) --data-binary "@$(NAME)-platform-$(RELEASE_VERSION).tgz" $(CHART_REPO)/api/charts
+	curl --fail -u $(CHARTMUSEUM_CREDS_USR):$(CHARTMUSEUM_CREDS_PSW) --data-binary "@$(NAME)-platform-$(VERSION).tgz" $(CHART_REPO)/api/charts
+	helm repo add jenkins-x https://storage.googleapis.com/chartmuseum.jenkins-x.io
+	echo "we have the following remote helm repos:"	
+	helm repo list
 	helm repo update
 	rm -rf ${NAME}*.tgz
-	updatebot push-version --kind make CHART_VERSION $(RELEASE_VERSION)
-	updatebot push-regex -r "JX_PLATFORM_VERSION=(.*)" -v $(RELEASE_VERSION) build.sh
-	jx step create version pr -f "jenkins-x/*" -b --images
-	echo $(RELEASE_VERSION) > VERSION
+	jx step changelog  --verbose --version ${VERSION} --rev ${PULL_BASE_SHA}
+	jx step create pr make --name CHART_VERSION --version $(VERSION) --repo https://github.com/jenkins-x/cloud-environments.git
+	jx step create pr regex --regex "JX_PLATFORM_VERSION=(.*)" --version $(VERSION) --files build.sh --repo https://github.com/jenkins-x/cloud-environments.git
+	jx step create pr versions -f "jenkins-x/*" -b --images
