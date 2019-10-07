@@ -1001,7 +1001,7 @@ jenkins:
 
     GitLab:
     - Name: tZero
-      Url: https://git-lab.com/
+      Url: https://gitlab.com/
       Credential: tzero-gitlab-auth
 
     # global node properties
@@ -1020,7 +1020,7 @@ jenkins:
     DockerHostPath: "/var/run/docker.sock"
     DockerMountPath: "/var/run/docker.sock"
 
-    KubernetesServerURL: "https://api.ultron.cluster.local"
+    KubernetesServerURL: "https://kubernetes.cluster.svc"
 
     # Key Value selectors. Ex:
     # jenkins-agent: v1
@@ -2355,9 +2355,12 @@ jenkins:
 PipelineSecrets:
   DockerConfig: |-
     {
-    "credHelpers": {
-        "gcr.io": "gcloud",
-        "us.gcr.io": "gcloud",
+        "credHelpers": {
+            "gcr.io": "gcr",
+            "us.gcr.io": "gcr",
+            "eu.gcr.io": "gcr",
+            "asia.gcr.io": "gcr",
+            "staging-k8s.gcr.io": "gcr"
         }
     }
   GithubToken:
@@ -2375,51 +2378,67 @@ PipelineSecrets:
   MavenSettingsSecurityXML:
   MavenSettingsXML: |-
     <settings>
-        <!-- sets the local maven repository outside of the ~/.m2 folder for easier mounting of secrets and repo -->
-        <localRepository>${user.home}/.mvnrepository</localRepository>
-        <!-- lets disable the download progress indicator that fills up logs -->
-        <interactiveMode>false</interactiveMode>
-        <mirrors>
-            <mirror>
-            <id>nexus</id>
-            <mirrorOf>external:*</mirrorOf>
-            <url>http://nexus:8081/repository/maven-group/</url>
-            </mirror>
-        </mirrors>
-        <servers>
-            <server>
-            <id>nexus</id>
-            <username>admin</username>
-            <password>admin123</password>
-        </server>
-        <server>
-            <id>oss-sonatype-staging</id>
-            <username></username>
-            <password></password>
-            </server>
-        </servers>
-        <profiles>
-            <profile>
-                <id>nexus</id>
-                <properties>
-                    <altDeploymentRepository>nexus::default::http://nexus/repository/maven-snapshots/</altDeploymentRepository>
-                    <altReleaseDeploymentRepository>nexus::default::http://nexus/repository/maven-releases/</altReleaseDeploymentRepository>
-                    <altSnapshotDeploymentRepository>nexus::default::http://nexus/repository/maven-snapshots/</altSnapshotDeploymentRepository>
-                </properties>
-            </profile>
-            <profile>
-                <id>release</id>
-                <properties>
-                    <gpg.executable>gpg</gpg.executable>
-                    <gpg.passphrase>mysecretpassphrase</gpg.passphrase>
-                </properties>
-            </profile>
-        </profiles>
-        <activeProfiles>
-            <!--make the profile active all the time -->
-            <activeProfile>nexus</activeProfile>
-        </activeProfiles>
-    </settings>
+          <!-- sets the local maven repository outside of the ~/.m2 folder for easier mounting of secrets and repo -->
+          <!-- <localRepository>${user.home}/.mvnrepository</localRepository> -->
+          <localRepository>.mvn</localRepository>
+          <!-- lets disable the download progress indicator that fills up logs -->
+          <interactiveMode>false</interactiveMode>
+          <mirrors>
+              <mirror>
+                  <id>nexus</id>
+                  <mirrorOf>external:*</mirrorOf>
+                  <url>http://nexus/repository/maven-group/</url>
+              </mirror>
+              <mirror>
+                  <id>central</id>
+                  <mirrorOf>external:*</mirrorOf>
+                  <url>https://mediciventures.jfrog.io/mediciventures/</url>
+              </mirror>
+          </mirrors>
+          <servers>
+              <server>
+                  <id>nexus</id>
+                  <username>admin</username>
+                  <password>SuperHappy123!</password>
+              </server>
+              <server>
+                  <id>central</id>
+            			<username>gitlab</username>
+            			<!-- <password>{Aziic+tkM8kHewZn9o2izKQZEZ3zHvaDi1cspc53rQSfDWmg8W2p4d0+H+NcqMRcGFA6vF08otJ8sTjQsscqdayKrUC7+zMepd7RhJRCmzs4B7Rhyht917DY2Lw6g+Kn}</password> -->
+            			<password>SFv9aN23p4dy</password>
+              </server>
+          </servers>
+          <profiles>
+              <profile>
+                  <id>nexus</id>
+                  <properties>
+                      <altDeploymentRepository>nexus::default::https://mediciventures.jfrog.io/mediciventures/maven-snapshots/</altDeploymentRepository>
+                      <altReleaseDeploymentRepository>nexus::default::https://mediciventures.jfrog.io/mediciventures/maven-releases/</altReleaseDeploymentRepository>
+                      <altSnapshotDeploymentRepository>nexus::default::https://mediciventures.jfrog.io/mediciventures/maven-snapshots/</altSnapshotDeploymentRepository>
+                  </properties>
+              </profile>
+              <profile>
+                  <id>central</id>
+                  <properties>
+                      <altDeploymentRepository>nexus::default::http://nexus/repository/maven-snapshots/</altDeploymentRepository>
+                      <altReleaseDeploymentRepository>nexus::default::http://nexus/repository/maven-releases/</altReleaseDeploymentRepository>
+                      <altSnapshotDeploymentRepository>nexus::default::http://nexus/repository/maven-snapshots/</altSnapshotDeploymentRepository>
+                  </properties>
+              </profile>
+              <profile>
+                  <id>release</id>
+                  <properties>
+                      <gpg.executable>gpg</gpg.executable>
+                      <gpg.passphrase>mysecretpassphrase</gpg.passphrase>
+                  </properties>
+              </profile>
+          </profiles>
+          <activeProfiles>
+              <!--make the profile active all the time -->
+              <activeProfile>central</activeProfile>
+              <activeProfile>nexus</activeProfile>
+          </activeProfiles>
+      </settings>
 
 grafana:
   server:

@@ -24,8 +24,7 @@ dependencies:
 - name: heapster
   repository: https://kubernetes-charts.storage.googleapis.com
   version: 0.3.2
-- condition: docker-registry.enabled
-  name: docker-registry
+- name: docker-registry
   repository: https://kubernetes-charts.storage.googleapis.com
   version: 1.5.0
 - alias: gcactivities
