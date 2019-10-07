@@ -29,8 +29,7 @@ install: clean setup build
 	$(HELM) upgrade --debug --install $(NAME) jenkins-x-platform
 
 apply: build
-	cd jenkins-x-platform
-	jx step helm apply $(NAME) .
+	cd jenkins-x-platform && jx step helm apply $(NAME) .
 
 upgrade: clean setup build
 	$(HELM) upgrade --debug --install $(NAME) jenkins-x-platform
@@ -59,7 +58,13 @@ endif
 	curl --fail -u $(CHARTMUSEUM_CREDS_USR):$(CHARTMUSEUM_CREDS_PSW) --data-binary "@$(NAME)-platform-$(RELEASE_VERSION).tgz" $(CHART_REPO)/api/charts
 	helm repo update
 	rm -rf ${NAME}*.tgz
+<<<<<<< HEAD
 	updatebot push-version --kind make CHART_VERSION $(RELEASE_VERSION)
 	updatebot push-regex -r "JX_PLATFORM_VERSION=(.*)" -v $(RELEASE_VERSION) build.sh
 	jx step create version pr -f "jenkins-x/*" -b --images
 	echo $(RELEASE_VERSION) > VERSION
+=======
+	jx step changelog  --verbose --version ${VERSION} --rev ${PULL_BASE_SHA}
+	jx step create pr make --name CHART_VERSION --version $(VERSION) --repo https://github.com/jenkins-x/cloud-environments.git
+	jx step create pr regex --regex "JX_PLATFORM_VERSION=(.*)" --version $(VERSION) --files build.sh --repo https://github.com/jenkins-x/cloud-environments.git
+>>>>>>> 8109b8cb41b6de6df9ab956aadc9dfbbff16c862

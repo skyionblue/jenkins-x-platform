@@ -9,15 +9,15 @@ pipelineConfig:
         - name: release
           environment:
           - name: GIT_COMMITTER_EMAIL
-            value: jenkins-x@googlegroups.com
+            value: jcelli@tzero.com
           - name: GIT_COMMITTER_NAME
-            value: jenkins-x-bot
+            value: "James Celli"
           - name: GIT_AUTHOR_EMAIL
-            value: jenkins-x@googlegroups.com
+            value: jcelli@tzero.com
           - name: GIT_AUTHOR_NAME
-            value: jenkins-x-bot
+            value: "James Celli"
           steps:
-          - image: gcr.io/jenkinsxio/builder-jx:0.1.571
+          - image: gcr.io/jenkinsxio/builder-jx:0.1.610
             command: jx
             args:
               - step
@@ -29,7 +29,7 @@ pipelineConfig:
               - -f
               - /builder/home/basic-auth-user.json
             name: basic-auth-username
-          - image: gcr.io/jenkinsxio/builder-jx:0.1.571
+          - image: gcr.io/jenkinsxio/builder-jx:0.1.610
             command: jx
             args:
               - step
@@ -41,7 +41,7 @@ pipelineConfig:
               - -f
               - /builder/home/basic-auth-pass.json
             name: basic-auth-password
-          - image: gcr.io/jenkinsxio/builder-jx:0.1.571
+          - image: gcr.io/jenkinsxio/builder-jx:0.1.610
             command: make
             args:
               - release
@@ -53,16 +53,16 @@ pipelineConfig:
         stages:
         - name: build-pr
           steps:
-          - image: gcr.io/jenkinsxio/builder-jx:0.1.571
+          - image: gcr.io/jenkinsxio/builder-jx:0.1.610
             command: make
             args:
               - build
 
-          - image: gcr.io/jenkinsxio/builder-jx:0.1.571
+          - image: gcr.io/jenkinsxio/builder-jx:0.1.610
             command: helm
             args:
               - template
               - jenkins-x-platform
 
-          - image: gcr.io/jenkinsxio/builder-jx:0.1.571
+          - image: gcr.io/jenkinsxio/builder-jx:0.1.610
             command: ./jx/scripts/test.sh
