@@ -1,5 +1,5 @@
 # to specify the docker registry when not using Jenkins
-dockerRegistry: "gcr.io"
+dockerRegistry: "gcr.io/jcelli-sandbox-247217"
 
 JXBasicAuth: admin:$apr1$a/HdTrV7$XYCGJWF9PdVwVVTvjMyaU/
 
