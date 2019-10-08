@@ -1007,7 +1007,7 @@ jenkins:
     # global node properties
     Global:
       EnvVars:
-        DOCKER_REGISTRY: "gcr.io"
+        DOCKER_REGISTRY: "gcr.io/jcelli-sandbox-247217"
         TILLER_NAMESPACE: "kube-system"
 
   Agent:
@@ -1020,7 +1020,7 @@ jenkins:
     DockerHostPath: "/var/run/docker.sock"
     DockerMountPath: "/var/run/docker.sock"
 
-    KubernetesServerURL: "https://kubernetes.cluster.svc"
+    KubernetesServerURL: "https://kubernetes.default"
 
     # Key Value selectors. Ex:
     # jenkins-agent: v1
